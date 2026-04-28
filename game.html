@@ -8,59 +8,103 @@
 <style>
 body {
   margin:0;
-  font-family:sans-serif;
-  background: linear-gradient(135deg,#ff6eb4,#ff2d78,#c2185b);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#ff6eb4,#ff2d78);
   color:white;
+  text-align:center;
 }
 
-/* Title */
 h1 {
-  margin:20px;
+  margin-top:30px;
 }
 
-/* Puzzle board */
+.main {
+  display:flex;
+  gap:60px;
+  align-items:center;
+  justify-content:center;
+  margin-top:30px;
+}
+
 .board {
   display:grid;
-  grid-template-columns: repeat(4, 80px);
-  grid-template-rows: repeat(4, 80px);
-  gap:5px;
-  margin-top:20px;
+  grid-template-columns: repeat(4, 90px);
+  gap:10px;
 }
 
-/* Slots */
 .slot {
-  width:80px;
-  height:80px;
+  width:90px;
+  height:90px;
   background: rgba(255,255,255,0.2);
-  border-radius:10px;
+  border-radius:15px;
 }
 
-/* Pieces */
 .pieces {
-  margin-top:30px;
-  display:flex;
-  flex-wrap:wrap;
-  width:340px;
-  gap:5px;
+  display:grid;
+  grid-template-columns: repeat(4, 90px);
+  gap:10px;
+  margin-top:20px;
   justify-content:center;
 }
 
 .piece {
-  width:80px;
-  height:80px;
-  border-radius:10px;
+  width:90px;
+  height:90px;
+  border-radius:15px;
+  background-size:360px 360px;
   cursor:grab;
-  background-size:320px 320px;
+  transition:0.2s;
 }
 
-/* Complete message */
-#done {
-  margin-top:20px;
-  font-size:1.2rem;
+.piece:hover {
+  transform: scale(1.05);
+}
+
+.side {
+  text-align:center;
+}
+
+.preview {
+  width:150px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.3);
+}
+
+#final {
   display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:linear-gradient(#ff6eb4,#ff2d78);
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  padding:20px;
+}
+
+.final-img {
+  width:260px;
+  border-radius:20px;
+  margin-bottom:20px;
+}
+
+.love-msg {
+  max-width:350px;
+  font-size:1rem;
+  line-height:1.6;
+}
+
+button {
+  margin-top:20px;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  background:white;
+  color:#ff2d78;
+  font-weight:bold;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -69,22 +113,75 @@ h1 {
 
 <h1>Complete Our Puzzle ❤️</h1>
 
-<div class="board" id="board"></div>
+<div class="main">
+  <div>
+    <div class="board" id="board"></div>
+    <div class="pieces" id="pieces"></div>
+  </div>
 
-<div class="pieces" id="pieces"></div>
+  <div class="side">
+    <img id="preview" class="preview">
+    <p>Hint: Complete me 😉</p>
+  </div>
+</div>
 
-<div id="done">🎉 You completed us 💖</div>
+<div id="final">
+  <img id="finalImg" class="final-img">
+  <div class="love-msg" id="msg"></div>
+  <button onclick="nextPuzzle()">Next ➡️</button>
+</div>
 
 <script>
 const size = 4;
-const img = "./me.jpeg"; // 🔥 replace with your image
 
+/* 🔥 IMAGE FLOW */
+const images = ["img1.jpeg","img2.jpeg","img3.jpeg"];
+
+const messages = [
+`uk jab iss samay ham iskcon me baithe the 
+the only thing i was thinking ki ye samay ruk sa kyu ny jata .. 
+tujhe yaad hai kya we were talking abt krishna ki story idr baithke 
+while looking at that temple oofffo that moment 😭😭😭🤌🏻🤌🏻🤌🏻🤌🏻🤌🏻`,
+
+`jbhi tumhara ye phto dekhta hu esa lgta hai kitnii cutiie bacchi hogi hamari 😍`,
+
+`25-04-26 ❤️  
+
+Lunch ke baad madam ko walk pe jaana tha 😌  
+Mene bola "Ola le lete hai"…  
+par nahi… ziddi motuu 😭💖  
+
+Aur main bas tumhe leke chalta raha ❤️  
+Thoda tired tha… but tumhare saath sab perfect tha 🫶  
+
+Aur haan…  
+tum ziddi ho…  
+par meri ho 😉💖`
+];
+
+/* 🔥 PROGRESS */
+let current = parseInt(localStorage.getItem("level")) || 0;
+
+if(current >= images.length){
+  localStorage.setItem("level",0);
+  current = 0;
+}
+
+let img = images[current];
+
+document.getElementById("preview").src = img;
+
+/* ELEMENTS */
 const board = document.getElementById("board");
 const piecesContainer = document.getElementById("pieces");
 
 let correct = 0;
 
-/* Create slots */
+/* RESET BOARD */
+board.innerHTML = "";
+piecesContainer.innerHTML = "";
+
+/* CREATE SLOTS */
 for(let i=0;i<size*size;i++){
   let slot = document.createElement("div");
   slot.className="slot";
@@ -96,15 +193,13 @@ for(let i=0;i<size*size;i++){
     let pieceId = e.dataTransfer.getData("id");
     let piece = document.getElementById(pieceId);
 
-    if(slot.children.length === 0){
+    if(piece.dataset.correct == slot.dataset.index){
       slot.appendChild(piece);
-
-      if(piece.dataset.correct == slot.dataset.index){
-        correct++;
-      }
+      piece.style.cursor="default";
+      correct++;
 
       if(correct === size*size){
-        document.getElementById("done").style.display="block";
+        showSuccess();
       }
     }
   };
@@ -112,7 +207,7 @@ for(let i=0;i<size*size;i++){
   board.appendChild(slot);
 }
 
-/* Create pieces */
+/* CREATE PIECES */
 let arr = [];
 
 for(let i=0;i<size;i++){
@@ -121,10 +216,8 @@ for(let i=0;i<size;i++){
   }
 }
 
-/* Shuffle */
 arr.sort(()=>Math.random()-0.5);
 
-/* Render pieces */
 arr.forEach((pos,idx)=>{
   let piece = document.createElement("div");
   piece.className="piece";
@@ -134,7 +227,7 @@ arr.forEach((pos,idx)=>{
   piece.dataset.correct = pos.index;
 
   piece.style.backgroundImage = `url(${img})`;
-  piece.style.backgroundPosition = `-${pos.y*80}px -${pos.x*80}px`;
+  piece.style.backgroundPosition = `-${pos.y*90}px -${pos.x*90}px`;
 
   piece.ondragstart = e=>{
     e.dataTransfer.setData("id",piece.id);
@@ -142,6 +235,20 @@ arr.forEach((pos,idx)=>{
 
   piecesContainer.appendChild(piece);
 });
+
+/* SUCCESS */
+function showSuccess(){
+  document.getElementById("final").style.display="flex";
+  document.getElementById("finalImg").src = img;
+  document.getElementById("msg").innerText = messages[current];
+}
+
+/* NEXT */
+function nextPuzzle(){
+  current++;
+  localStorage.setItem("level",current);
+  location.reload();
+}
 </script>
 
 </body>

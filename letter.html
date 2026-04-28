@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>For You ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+  margin:0;
+  font-family:'Poppins', sans-serif;
+  background: linear-gradient(135deg,#ff6eb4,#ff2d78);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+  color:#333;
+}
+
+/* ENVELOPE */
+.envelope{
+  width:320px;
+  height:220px;
+  background:white;
+  position:relative;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.5s;
+}
+
+.flap{
+  position:absolute;
+  top:0;
+  width:100%;
+  height:50%;
+  background:#ff2d78;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  transition:0.6s;
+  transform-origin:top;
+}
+
+.open .flap{
+  transform:rotateX(180deg);
+}
+
+.open{
+  transform:scale(1.2);
+}
+
+/* LETTER */
+.letter{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:white;
+  padding:40px;
+  overflow:auto;
+  display:none;
+}
+
+.letter.show{
+  display:block;
+}
+
+/* TEXT */
+.text{
+  max-width:700px;
+  margin:auto;
+  font-size:1rem;
+  line-height:1.8;
+  white-space:pre-line;
+}
+
+/* HEARTS */
+.heart{
+  position:fixed;
+  bottom:-20px;
+  animation:floatUp linear;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(0);opacity:1;}
+  to{transform:translateY(-100vh);opacity:0;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ENVELOPE -->
+<div class="envelope" onclick="openLetter()" id="env">
+  <div class="flap"></div>
+</div>
+
+<!-- LETTER -->
+<div class="letter" id="letter">
+  <div class="text" id="text"></div>
+</div>
+
+<!-- OPTIONAL MUSIC -->
+<audio id="music" loop>
+  <source src="janamjanam.mp3" type="audio/mp3">
+</audio>
+
+<script>
+
+/* LETTER CONTENT */
+const content = `
+Heyy motuu ❤️,
+
+Happy Birthday meri ziddi si, cute si, thodi annoying but meri favourite ladki 🫶
+
+Sach bolu… is baar maine sirf gift nahi diya…
+maine poora effort diya hai… poora dil diya hai.
+
+Yeh website…
+yeh puzzles…
+yeh story…
+aur sabse important… 365 chits 💌
+
+Har ek chit likhte waqt main bas ek hi cheez sochta tha…
+“aaj agar tu yeh padhegi toh smile karegi kya?”
+
+Kabhi cute likha…
+kabhi thoda sa flirty 😏
+kabhi emotional…
+
+Par har chit me ek cheez same hai…
+👉 main… aur mera pyaar ❤️
+
+Aur yeh website…
+
+Yeh sirf coding nahi hai…
+yeh tera experience hai.
+
+Main har page pe ruk ke sochta tha…
+“yahan tu kya feel karegi?”
+
+Mujhe tujhe impress nahi karna…
+bas yeh chahata hu ki tu samjhe…
+
+👉 tu mere liye kitni important hai 💖
+
+Tu ziddi hai…
+thodi si overcute hai…
+aur haan… thodi si meri bhi hai 😌
+
+Aur main?
+
+Main woh hu jo…
+tere liye 2km chal sakta hai…
+lecture skip kar sakta hai…
+aur ab… 365 din tak tujhe daily yaad dila sakta hai
+ki tu kitni special hai ❤️
+
+Har din ek chit open karna…
+cheat mat karna 😒😂
+
+Kyuki main chahata hu…
+tu mujhe 365 din tak thoda thoda feel kare 💌
+
+End me bas itna hi…
+
+Tu sirf meri story ka part nahi hai…
+tu meri story hai ❤️
+
+– Tera (jo clearly tere liye itna sab kar raha hai 😏)
+`;
+
+/* OPEN ENVELOPE */
+function openLetter(){
+  document.getElementById("env").classList.add("open");
+
+  setTimeout(()=>{
+    document.getElementById("letter").classList.add("show");
+    typeWriter();
+    document.getElementById("music").play().catch(()=>{});
+  },800);
+}
+
+/* TYPEWRITER */
+function typeWriter(){
+  let i = 0;
+  const speed = 20;
+
+  function typing(){
+    if(i < content.length){
+      document.getElementById("text").innerHTML += content.charAt(i);
+      i++;
+      setTimeout(typing, speed);
+    }
+  }
+  typing();
+}
+
+/* HEARTS */
+setInterval(()=>{
+  const heart = document.createElement("div");
+  heart.className="heart";
+  heart.innerText="💖";
+
+  heart.style.left = Math.random()*100+"vw";
+  heart.style.fontSize = (15 + Math.random()*20)+"px";
+
+  let duration = 4 + Math.random()*3;
+  heart.style.animationDuration = duration+"s";
+
+  document.body.appendChild(heart);
+
+  setTimeout(()=> heart.remove(), duration*1000);
+}, 1000);
+
+</script>
+
+</body>
+</html>

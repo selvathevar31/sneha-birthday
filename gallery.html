@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Our Memories 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin:0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg,#ff6eb4,#ff2d78);
+  color:white;
+}
+
+.header {
+  text-align:center;
+  padding:20px;
+  font-family:'Pacifico', cursive;
+  font-size:2rem;
+}
+
+/* FORM CONTAINER */
+.form {
+  display:flex;
+  gap:15px;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  padding:20px;
+}
+
+/* INPUT BOXES */
+.input-box {
+  padding:12px 15px;
+  border-radius:15px;
+  border:none;
+  outline:none;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  color:white;
+  font-size:0.9rem;
+  min-width:180px;
+  transition:0.3s;
+}
+
+.input-box::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+.input-box:focus {
+  transform: scale(1.05);
+  box-shadow:0 0 10px rgba(255,255,255,0.4);
+}
+
+/* FILE UPLOAD (CUSTOM) */
+.file-upload {
+  position:relative;
+  overflow:hidden;
+  border-radius:15px;
+  background: rgba(255,255,255,0.2);
+  padding:12px 18px;
+  cursor:pointer;
+  backdrop-filter: blur(10px);
+  transition:0.3s;
+}
+
+.file-upload span {
+  font-size:0.9rem;
+}
+
+.file-upload input {
+  position:absolute;
+  width:100%;
+  height:100%;
+  opacity:0;
+  cursor:pointer;
+}
+
+.file-upload:hover {
+  transform: scale(1.05);
+  box-shadow:0 0 10px rgba(255,255,255,0.4);
+}
+
+/* BUTTON */
+.add-btn {
+  background: white;
+  color:#ff2d78;
+  border:none;
+  padding:12px 18px;
+  border-radius:15px;
+  cursor:pointer;
+  font-weight:600;
+  transition:0.3s;
+}
+
+.add-btn:hover {
+  transform: scale(1.08);
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  .form {
+    flex-direction:column;
+  }
+
+  .input-box {
+    width:90%;
+  }
+}
+
+/* TIMELINE */
+.timeline {
+  width:90%;
+  margin:auto;
+  margin-top:30px;
+  position:relative;
+}
+
+.timeline::after {
+  content:'';
+  position:absolute;
+  width:4px;
+  background:white;
+  top:0;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/* ITEM */
+.item {
+  display:flex;
+  justify-content:space-between;
+  margin:40px 0;
+  position:relative;
+  transition:0.3s;
+}
+
+.left { flex-direction:row; }
+.right { flex-direction:row-reverse; }
+
+/* CARD */
+.card {
+  width:45%;
+  display:flex;
+  gap:15px;
+  align-items:center;
+  animation: fadeUp 0.6s ease;
+}
+
+.card img {
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.4);
+}
+
+/* TEXT */
+.text {
+  max-width:200px;
+}
+
+.date {
+  font-size:0.8rem;
+  opacity:0.7;
+}
+
+.story {
+  font-size:0.95rem;
+  margin-top:5px;
+}
+
+/* DELETE */
+.delete {
+  margin-top:5px;
+  cursor:pointer;
+  font-size:1.2rem;
+  transition:0.2s;
+}
+
+.delete:hover {
+  transform:scale(1.2);
+}
+
+/* DOT */
+.item::before {
+  content:'';
+  position:absolute;
+  width:15px;
+  height:15px;
+  background:white;
+  border-radius:50%;
+  left:50%;
+  transform:translateX(-50%);
+  top:20px;
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .timeline::after { left:20px; }
+
+  .item {
+    flex-direction:column !important;
+    margin-left:40px;
+  }
+
+  .card { width:100%; }
+
+  .item::before { left:20px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Our Story 💖</div>
+
+<div class="form">
+  
+  <!-- FILE UPLOAD -->
+  <label class="file-upload">
+    <input type="file" id="imgInput">
+    <span>📸 Upload Photo</span>
+  </label>
+
+  <!-- DATE -->
+  <input type="date" id="dateInput" class="input-box">
+
+  <!-- STORY -->
+  <textarea id="storyInput" placeholder="Write your cute memory... 💖" class="input-box"></textarea>
+
+  <!-- BUTTON -->
+  <button class="add-btn" onclick="addMemory()">Add 💕</button>
+
+</div>
+
+<div class="timeline" id="timeline"></div>
+
+<script>
+
+let memories = JSON.parse(localStorage.getItem("memories")) || [];
+
+/* ADD */
+function addMemory(){
+  const file = document.getElementById("imgInput").files[0];
+  const date = document.getElementById("dateInput").value;
+  const story = document.getElementById("storyInput").value;
+
+  if(!file || !date || !story){
+    alert("Fill everything 😒");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(e){
+    const newMemory = {
+      id: Date.now(),
+      img: e.target.result,
+      date,
+      story
+    };
+
+    memories.push(newMemory);
+    memories.sort((a,b)=> new Date(a.date) - new Date(b.date));
+
+    localStorage.setItem("memories", JSON.stringify(memories));
+
+    // clear inputs
+    document.getElementById("imgInput").value = "";
+    document.getElementById("dateInput").value = "";
+    document.getElementById("storyInput").value = "";
+
+    render();
+  };
+
+  reader.readAsDataURL(file);
+}
+
+/* DELETE */
+function deleteMemory(id){
+  const element = document.querySelector(`[data-id='${id}']`);
+  if(!element) return;
+
+  element.style.opacity = "0";
+  element.style.transform = "translateY(20px)";
+
+  setTimeout(()=>{
+    memories = memories.filter(m => m.id !== id);
+    localStorage.setItem("memories", JSON.stringify(memories));
+    render();
+  },300);
+}
+
+/* RENDER */
+function render(){
+  const timeline = document.getElementById("timeline");
+  timeline.innerHTML = "";
+
+  memories.forEach((mem, index)=>{
+
+    const side = index % 2 === 0 ? "left" : "right";
+
+    const item = document.createElement("div");
+    item.className = `item ${side}`;
+    item.setAttribute("data-id", mem.id); // ✅ FIX
+
+    item.innerHTML = `
+      <div class="card">
+        <img src="${mem.img}">
+        <div class="text">
+          <div class="date">${mem.date}</div>
+          <div class="story">${mem.story}</div>
+          <div class="delete" onclick="deleteMemory(${mem.id})">🗑️</div>
+        </div>
+      </div>
+    `;
+
+    timeline.appendChild(item);
+  });
+}
+
+render();
+
+</script>
+
+</body>
+</html>
