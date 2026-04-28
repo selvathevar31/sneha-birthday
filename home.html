@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>For You ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin:0;
+  height:100vh;
+  background: linear-gradient(135deg,#ff6eb4,#ff2d78,#c2185b);
+  font-family:'Quicksand',sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  color:white;
+  overflow:hidden;
+}
+
+/* Title */
+.title {
+  position:absolute;
+  top:40px;
+  font-family:'Pacifico',cursive;
+  font-size:2.5rem;
+}
+
+/* Stack container */
+.stack {
+  position:relative;
+  width:280px;
+  height:380px;
+}
+
+/* Cards */
+.card {
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:25px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(20px);
+  border:1px solid rgba(255,255,255,0.3);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:0.4s ease;
+  text-align:center;
+}
+
+/* Depth effect */
+.card:nth-child(1){ z-index:5; transform: scale(1); }
+.card:nth-child(2){ z-index:4; transform: scale(0.95) translateY(10px); opacity:0.9; }
+.card:nth-child(3){ z-index:3; transform: scale(0.9) translateY(20px); opacity:0.8; }
+.card:nth-child(4){ z-index:2; transform: scale(0.85) translateY(30px); opacity:0.7; }
+.card:nth-child(5){ z-index:1; transform: scale(0.8) translateY(40px); opacity:0.6; }
+
+/* Hover */
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Icon */
+.icon {
+  font-size:3rem;
+}
+
+.card h2 {
+  margin-top:15px;
+}
+
+/* Buttons */
+.controls {
+  margin-top:30px;
+}
+
+button {
+  background:white;
+  color:#ff2d78;
+  border:none;
+  padding:10px 20px;
+  border-radius:20px;
+  margin:0 10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* Floating hearts */
+.heart {
+  position:fixed;
+  font-size:16px;
+  animation: floatUp linear infinite;
+  opacity:0.2;
+}
+
+@keyframes floatUp {
+  0% { transform:translateY(100vh); }
+  100% { transform:translateY(-10vh); opacity:0; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="title">For You 💖</div>
+
+<div class="stack" id="stack">
+
+  <div class="card" onclick="go('story.html')">
+    <div class="icon">📖</div>
+    <h2>Our Story</h2>
+  </div>
+
+  <div class="card" onclick="go('gallery.html')">
+    <div class="icon">📸</div>
+    <h2>Gallery</h2>
+  </div>
+
+  <div class="card" onclick="go('letter.html')">
+    <div class="icon">💌</div>
+    <h2>Letter</h2>
+  </div>
+
+  <div class="card" onclick="go('game.html')">
+    <div class="icon">🎮</div>
+    <h2>Fun Game</h2>
+  </div>
+
+  <div class="card" onclick="go('music.html')">
+    <div class="icon">🎵</div>
+    <h2>Our Songs</h2>
+  </div>
+
+</div>
+
+<div class="controls">
+  <button onclick="prev()">⬅</button>
+  <button onclick="next()">➡</button>
+</div>
+
+<script>
+const stack = document.getElementById("stack");
+
+/* rotate cards */
+function next(){
+  stack.appendChild(stack.firstElementChild);
+}
+
+function prev(){
+  stack.insertBefore(stack.lastElementChild, stack.firstElementChild);
+}
+
+/* navigation */
+function go(page){
+  document.body.style.opacity="0";
+  setTimeout(()=>window.location.href=page,300);
+}
+
+/* floating hearts */
+for(let i=0;i<20;i++){
+  let h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="💖";
+  h.style.left=Math.random()*100+"%";
+  h.style.animationDuration=(4+Math.random()*5)+"s";
+  document.body.appendChild(h);
+}
+</script>
+
+</body>
+</html>

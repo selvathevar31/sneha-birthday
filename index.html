@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surprise For You 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --hot-pink: #ff2d78;
+    --bubblegum: #ff6eb4;
+    --blush: #ffb3d1;
+    --cream: #fff0f7;
+    --deep-pink: #c2185b;
+    --gold: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ff6eb4 0%, #ff2d78 40%, #c2185b 100%);
+    font-family: 'Quicksand', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Floating balloons */
+  .balloon {
+    position: fixed;
+    border-radius: 50%;
+    opacity: 0.18;
+    animation: floatUp linear infinite;
+    pointer-events: none;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0.18; }
+    100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    animation: confettiFall linear infinite;
+    pointer-events: none;
+    opacity: 0.75;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-20px) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(720deg); }
+  }
+
+  /* Stars */
+  .star {
+    position: fixed;
+    font-size: 1.2rem;
+    animation: starTwinkle ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0.15; transform: scale(1); }
+    50%       { opacity: 0.9;  transform: scale(1.4); }
+  }
+
+  /* ── Surprise screen ── */
+  #surprise-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    animation: fadeIn 1s ease;
+    text-align: center;
+    padding: 20px;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+
+  .cake-emoji {
+    font-size: 5rem;
+    animation: bounce 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.25));
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50%       { transform: translateY(-18px) rotate(5deg); }
+  }
+
+  .surprise-title {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(2.4rem, 8vw, 4rem);
+    color: #fff;
+    text-shadow: 0 3px 0 var(--deep-pink), 0 6px 20px rgba(0,0,0,0.3);
+    letter-spacing: 2px;
+    line-height: 1.2;
+  }
+
+  .surprise-sub {
+    color: #ffe0f0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .open-btn {
+    background: #fff;
+    color: var(--hot-pink);
+    border: none;
+    border-radius: 50px;
+    padding: 16px 44px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.2), 0 0 0 4px rgba(255,255,255,0.3);
+    transition: transform .2s, box-shadow .2s;
+    letter-spacing: 1px;
+  }
+  .open-btn:hover { transform: scale(1.07); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+  .open-btn:active { transform: scale(.97); }
+
+  /* ── Lock / dialpad screen ── */
+  #lock-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    animation: fadeIn .7s ease;
+    padding: 20px;
+  }
+
+  .lock-card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(18px);
+    border: 2px solid rgba(255,255,255,0.35);
+    border-radius: 28px;
+    padding: 36px 32px 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 360px;
+    width: 100%;
+  }
+
+  .lock-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 1.5rem;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    letter-spacing: 1px;
+  }
+
+  /* Password input */
+  .pw-input {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.55);
+    border-radius: 14px;
+    width: 100%;
+    padding: 14px 18px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    text-align: center;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .pw-input::placeholder { color: rgba(255,255,255,0.5); letter-spacing: 1px; font-size: 1rem; }
+  .pw-input:focus {
+    border-color: #fff;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
+  }
+
+  .enter-btn {
+    width: 100%;
+    background: #fff;
+    color: var(--hot-pink);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  .enter-btn:hover  { transform: scale(1.04); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .enter-btn:active { transform: scale(.97); }
+
+  .error-msg {
+    color: #ffe0f0;
+    font-size: .9rem;
+    font-weight: 600;
+    min-height: 20px;
+    letter-spacing: .5px;
+    animation: shake .4s ease;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-7px); }
+    40%,80% { transform: translateX(7px); }
+  }
+
+  /* ── Success screen ── */
+  #success-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    animation: fadeIn .7s ease;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .success-emoji {
+    font-size: 5rem;
+    animation: pop .6s cubic-bezier(.17,.89,.32,1.28) both;
+  }
+  @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .success-title {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(2rem, 7vw, 3.2rem);
+    color: #fff;
+    text-shadow: 0 3px 0 var(--deep-pink), 0 6px 20px rgba(0,0,0,0.25);
+  }
+
+  .success-msg {
+    color: #ffe0f0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    max-width: 300px;
+    line-height: 1.6;
+  }
+
+  .hearts {
+    font-size: 2rem;
+    letter-spacing: 6px;
+    animation: heartbeat 1s ease-in-out infinite;
+  }
+  @keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.18); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Surprise screen ── -->
+<div id="surprise-screen">
+  <div class="cake-emoji">🎂</div>
+  <div class="surprise-title">Surprise<br>For You! 🎉</div>
+  <div class="surprise-sub">Something special is waiting…</div>
+  <button class="open-btn" onclick="showLock()">Open Your Surprise 🎁</button>
+</div>
+
+<!-- ── Lock screen ── -->
+<div id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-title">🔒 Enter Password</div>
+    <input class="pw-input" id="pw-input" type="password" placeholder="Type password here…" autocomplete="off" />
+    <button class="enter-btn" onclick="checkPassword()">✓ Enter</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+</div>
+
+<!-- ── Success screen ── -->
+<div id="success-screen">
+  <div class="success-emoji">🥳</div>
+  <div class="success-title">Yay! You made it! 🎊</div>
+  <div class="success-msg">Wishing you the most magical birthday ever! You deserve all the love and happiness in the world. 🌸</div>
+  <div class="hearts">💖 💗 💓 💞</div>
+</div>
+
+<script>
+  /* ─── decorations ─── */
+  const balloonColors = ['#ff2d78','#ff6eb4','#ffb3d1','#ff80ab','#f48fb1','#fff'];
+  for (let i = 0; i < 14; i++) {
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    const sz = 30 + Math.random() * 60;
+    b.style.cssText = `
+      width:${sz}px; height:${sz * 1.25}px;
+      background:${balloonColors[i % balloonColors.length]};
+      left:${Math.random()*100}%;
+      animation-duration:${6 + Math.random()*8}s;
+      animation-delay:${-Math.random()*10}s;
+    `;
+    document.body.appendChild(b);
+  }
+
+  const confColors = ['#fff','#ffd700','#ff80ab','#ffb3d1','#ff2d78','#ffe082'];
+  for (let i = 0; i < 28; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.cssText = `
+      background:${confColors[i % confColors.length]};
+      left:${Math.random()*100}%;
+      animation-duration:${4 + Math.random()*6}s;
+      animation-delay:${-Math.random()*8}s;
+      border-radius:${Math.random() > .5 ? '50%' : '2px'};
+    `;
+    document.body.appendChild(c);
+  }
+
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.textContent = ['✦','✧','★','✩','✿'][i % 5];
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      animation-duration:${2 + Math.random()*3}s;
+      animation-delay:${-Math.random()*4}s;
+      color:${balloonColors[i % balloonColors.length]};
+      font-size:${0.8 + Math.random()*1.2}rem;
+    `;
+    document.body.appendChild(s);
+  }
+
+  const CORRECT = 'malkinbohotmartihai@250426';
+
+  function showLock() {
+    document.getElementById('surprise-screen').style.display = 'none';
+    const ls = document.getElementById('lock-screen');
+    ls.style.display = 'flex';
+    setTimeout(() => document.getElementById('pw-input').focus(), 100);
+  }
+
+  function checkPassword() {
+    const input = document.getElementById('pw-input');
+    const err = document.getElementById('error-msg');
+    if (input.value === CORRECT) {
+      showSuccess();
+    } else {
+      err.textContent = '❌ Wrong password. Try again!';
+      err.style.animation = 'none';
+      requestAnimationFrame(() => err.style.animation = 'shake .4s ease');
+      input.value = '';
+      input.focus();
+    }
+  }
+
+ function showSuccess() {
+  window.location.href = "home.html";
+}
+
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('lock-screen').style.display === 'flex' && e.key === 'Enter') {
+      checkPassword();
+    }
+  });
+</script>
+</body>
+</html>
+

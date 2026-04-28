@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle For You 💖</title>
+
+<style>
+body {
+  margin:0;
+  font-family:sans-serif;
+  background: linear-gradient(135deg,#ff6eb4,#ff2d78,#c2185b);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:white;
+}
+
+/* Title */
+h1 {
+  margin:20px;
+}
+
+/* Puzzle board */
+.board {
+  display:grid;
+  grid-template-columns: repeat(4, 80px);
+  grid-template-rows: repeat(4, 80px);
+  gap:5px;
+  margin-top:20px;
+}
+
+/* Slots */
+.slot {
+  width:80px;
+  height:80px;
+  background: rgba(255,255,255,0.2);
+  border-radius:10px;
+}
+
+/* Pieces */
+.pieces {
+  margin-top:30px;
+  display:flex;
+  flex-wrap:wrap;
+  width:340px;
+  gap:5px;
+  justify-content:center;
+}
+
+.piece {
+  width:80px;
+  height:80px;
+  border-radius:10px;
+  cursor:grab;
+  background-size:320px 320px;
+}
+
+/* Complete message */
+#done {
+  margin-top:20px;
+  font-size:1.2rem;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Complete Our Puzzle ❤️</h1>
+
+<div class="board" id="board"></div>
+
+<div class="pieces" id="pieces"></div>
+
+<div id="done">🎉 You completed us 💖</div>
+
+<script>
+const size = 4;
+const img = "./me.jpeg"; // 🔥 replace with your image
+
+const board = document.getElementById("board");
+const piecesContainer = document.getElementById("pieces");
+
+let correct = 0;
+
+/* Create slots */
+for(let i=0;i<size*size;i++){
+  let slot = document.createElement("div");
+  slot.className="slot";
+  slot.dataset.index=i;
+
+  slot.ondragover = e => e.preventDefault();
+
+  slot.ondrop = e => {
+    let pieceId = e.dataTransfer.getData("id");
+    let piece = document.getElementById(pieceId);
+
+    if(slot.children.length === 0){
+      slot.appendChild(piece);
+
+      if(piece.dataset.correct == slot.dataset.index){
+        correct++;
+      }
+
+      if(correct === size*size){
+        document.getElementById("done").style.display="block";
+      }
+    }
+  };
+
+  board.appendChild(slot);
+}
+
+/* Create pieces */
+let arr = [];
+
+for(let i=0;i<size;i++){
+  for(let j=0;j<size;j++){
+    arr.push({x:i,y:j,index:i*size+j});
+  }
+}
+
+/* Shuffle */
+arr.sort(()=>Math.random()-0.5);
+
+/* Render pieces */
+arr.forEach((pos,idx)=>{
+  let piece = document.createElement("div");
+  piece.className="piece";
+  piece.id="p"+idx;
+  piece.draggable=true;
+
+  piece.dataset.correct = pos.index;
+
+  piece.style.backgroundImage = `url(${img})`;
+  piece.style.backgroundPosition = `-${pos.y*80}px -${pos.x*80}px`;
+
+  piece.ondragstart = e=>{
+    e.dataTransfer.setData("id",piece.id);
+  };
+
+  piecesContainer.appendChild(piece);
+});
+</script>
+
+</body>
+</html>
